@@ -56,7 +56,6 @@ describe('Tests for lambda handler', () => {
 describe('Tests for business logic', () => {
     it('Succeeds with valid username', async () => {
         const result = await getDeveloperByUsername('username');
-        console.log(result)
         expect(result.statusCode).toEqual(200);
     });
     it('Returns 404 with not existing User', async () => {

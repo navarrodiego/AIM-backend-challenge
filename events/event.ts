@@ -31,7 +31,8 @@ export const event: APIGatewayProxyEvent = {
     queryStringParameters: null,
     multiValueQueryStringParameters: null,
     pathParameters: {
-        username: 'username'
+        username: 'username',
+        language: 'Javascript'
     },
     stageVariables: null,
     requestContext: {
