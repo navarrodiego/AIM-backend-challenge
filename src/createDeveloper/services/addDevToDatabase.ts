@@ -10,10 +10,11 @@ import {
 export const addDevToDatabase = async (item: DevInfo) => {
     try {
         const publicRepos = item.public_repos;
+        // Para poder ordenar los resultados de manera descendente, se agregan ceros al principio del número de repositorios públicos.
         const publicReposWithLeadingZeros = ('0000000' + publicRepos).slice(-7);
         const devInfoDynamoDB: DevInfoDynamoDB = {
             PK: item.username,
-            SK: `REPOS@${publicReposWithLeadingZeros}`,
+            SK: `REPOS@${publicReposWithLeadingZeros}`
         };
         if (item.name) {
             devInfoDynamoDB.name = item.name;
@@ -31,6 +32,7 @@ export const addDevToDatabase = async (item: DevInfo) => {
         ];
         for (const language in item.languages) {
             const proficiency = item.languages[language].toFixed(2);
+            // Para poder ordenar los resultados de manera descendente, se agregan ceros al principio de la proficiency.
             const proficiencyWithLeadingZeros = ('000.00' + proficiency).slice(
                 -6
             );

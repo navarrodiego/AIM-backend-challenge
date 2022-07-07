@@ -1,6 +1,8 @@
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { getClient } from './ddbClient';
 
+// En este archivo se crea un cliente de DynamoDBDocument, que es una abstracción sobre DynamoDB para hacer llamadas más legibles.
+
 const marshallOptions = {
     // Whether to automatically convert empty strings, blobs, and sets to `null`.
     convertEmptyValues: false, // false, by default.

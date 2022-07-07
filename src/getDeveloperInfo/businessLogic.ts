@@ -7,13 +7,22 @@ export const getDeveloperByUsername = async (
 ): Promise<APIGatewayProxyResult> => {
     try {
         const developerInfo = await queryDevInfoFromDatabase(username);
-        const response: developerInformation = { languages: {} } as developerInformation;
-        if (developerInfo && developerInfo.Items && developerInfo.Items.length > 0) {
-            developerInfo.Items.forEach(item => {
+        const response: developerInformation = {
+            languages: {}
+        } as developerInformation;
+        if (
+            developerInfo &&
+            developerInfo.Items &&
+            developerInfo.Items.length > 0
+        ) {
+            developerInfo.Items.forEach((item) => {
                 if (item.SK.startsWith('LANG')) {
                     const language = item.SK.split('@')[1];
                     const proficiency = item.SK.split('@')[2];
-                    response.languages[language] = `${proficiency.replace(/^0+/, '')}%`;
+                    response.languages[language] = `${proficiency.replace(
+                        /^0+/,
+                        ''
+                    )}%`;
                 } else {
                     const numberOfPublicRepos = item.SK.split('@')[1];
                     if (item.name) {
@@ -36,7 +45,6 @@ export const getDeveloperByUsername = async (
                 error: `No developer found with username ${username}`
             })
         };
-
     } catch (error) {
         throw error;
     }

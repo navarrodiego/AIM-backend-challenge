@@ -8,29 +8,32 @@ import { search } from '../../businessLogic';
 const ddbMock = mockClient(DynamoDBDocumentClient);
 
 beforeEach(() => {
+    // Antes de la ejecución de cada test, se simulan las llamadas a DynamoDB.
     ddbMock.reset();
     ddbMock.on(QueryCommand).resolves({
         Items: []
     });
-    ddbMock.on(QueryCommand, {
-        TableName: process.env.TABLE_NAME,
-        IndexName: "search-by-language",
-        KeyConditionExpression: "GSI1PK = :language",
-        ExpressionAttributeValues: {
-            ":language": 'Javascript'
-        }
-    }).resolves({
-        Items: [
-            {
-                GSI1PK: 'Javascript',
-                GSI1SK: '36.67@navarrodiego'
-            },
-            {
-                GSI1PK: 'Javascript',
-                GSI1SK: '26.67@username'
+    ddbMock
+        .on(QueryCommand, {
+            TableName: process.env.TABLE_NAME,
+            IndexName: 'search-by-language',
+            KeyConditionExpression: 'GSI1PK = :language',
+            ExpressionAttributeValues: {
+                ':language': 'Javascript'
             }
-        ]
-    });
+        })
+        .resolves({
+            Items: [
+                {
+                    GSI1PK: 'Javascript',
+                    GSI1SK: '36.67@navarrodiego'
+                },
+                {
+                    GSI1PK: 'Javascript',
+                    GSI1SK: '26.67@username'
+                }
+            ]
+        });
 });
 
 describe('Tests for lambda handler', () => {
@@ -49,16 +52,16 @@ describe('Tests for business logic', () => {
     it('Succeeds with existing language', async () => {
         const result = await search('Javascript');
         expect(result.statusCode).toEqual(200);
-        expect(result.body).toEqual(JSON.stringify([
-            ['navarrodiego', '36.67%'],
-            ['username', '26.67%']
-        ]));
+        expect(result.body).toEqual(
+            JSON.stringify([
+                ['navarrodiego', '36.67%'],
+                ['username', '26.67%']
+            ])
+        );
     });
     it('Returns 404 with not existing language', async () => {
-
         const result = await search('thisLanguageDoesNotExist');
         expect(result.statusCode).toEqual(200);
         expect(result.body).toEqual(JSON.stringify([]));
-
     });
 });

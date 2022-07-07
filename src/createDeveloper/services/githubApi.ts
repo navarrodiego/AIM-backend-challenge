@@ -38,7 +38,6 @@ const calculateLanguagesProficiency = async (
     languagesUrls: string[]
 ): Promise<{ [key: string]: number }> => {
     try {
-
         const arrayOfPromises = languagesUrls.map((url: string) => {
             return axios.get(url);
         });
@@ -48,13 +47,15 @@ const calculateLanguagesProficiency = async (
                 const languages: { [key: string]: number } = {};
                 responses.forEach(
                     (response: { data: { [key: string]: number } }) => {
-                        Object.keys(response.data).forEach((language: string) => {
-                            if (languages[language]) {
-                                languages[language] += 1;
-                            } else {
-                                languages[language] = 1;
+                        Object.keys(response.data).forEach(
+                            (language: string) => {
+                                if (languages[language]) {
+                                    languages[language] += 1;
+                                } else {
+                                    languages[language] = 1;
+                                }
                             }
-                        });
+                        );
                     }
                 );
                 for (const language in languages) {

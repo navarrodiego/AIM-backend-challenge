@@ -8,37 +8,40 @@ import { getDeveloperByUsername } from '../../businessLogic';
 const ddbMock = mockClient(DynamoDBDocumentClient);
 
 beforeEach(() => {
+    // Antes de la ejecución de cada test, se simulan las llamadas a DynamoDB.
     ddbMock.reset();
     ddbMock.on(QueryCommand).resolves({});
-    ddbMock.on(QueryCommand, {
-        TableName: process.env.TABLE_NAME,
-        KeyConditionExpression: 'PK = :pk',
-        ExpressionAttributeValues: {
-            ':pk': 'username'
-        }
-    }).resolves({
-        Items: [
-            {
-                PK: 'username',
-                SK: 'REPOS@0000007',
-                name: 'name',
-                location: 'location',
-                public_repos: 7
-            },
-            {
-                PK: 'username',
-                SK: 'LANG@Javascript@0.9',
-                GSI1PK: 'JavaScript',
-                GSI1SK: '0.9@username'
-            },
-            {
-                PK: 'username',
-                SK: 'LANG@Java@0.8',
-                GSI1PK: 'Java',
-                GSI1SK: '0.8@username'
+    ddbMock
+        .on(QueryCommand, {
+            TableName: process.env.TABLE_NAME,
+            KeyConditionExpression: 'PK = :pk',
+            ExpressionAttributeValues: {
+                ':pk': 'username'
             }
-        ]
-    });
+        })
+        .resolves({
+            Items: [
+                {
+                    PK: 'username',
+                    SK: 'REPOS@0000007',
+                    name: 'name',
+                    location: 'location',
+                    public_repos: 7
+                },
+                {
+                    PK: 'username',
+                    SK: 'LANG@Javascript@0.9',
+                    GSI1PK: 'JavaScript',
+                    GSI1SK: '0.9@username'
+                },
+                {
+                    PK: 'username',
+                    SK: 'LANG@Java@0.8',
+                    GSI1PK: 'Java',
+                    GSI1SK: '0.8@username'
+                }
+            ]
+        });
 });
 
 describe('Tests for lambda handler', () => {
@@ -59,9 +62,9 @@ describe('Tests for business logic', () => {
         expect(result.statusCode).toEqual(200);
     });
     it('Returns 404 with not existing User', async () => {
-
-        const result = await getDeveloperByUsername('thisUserDoesNotExist123456');
+        const result = await getDeveloperByUsername(
+            'thisUserDoesNotExist123456'
+        );
         expect(result.statusCode).toEqual(404);
-
     });
 });

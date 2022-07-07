@@ -9,7 +9,9 @@ export const search = async (
         const query = await searchFromDatabase(language);
         const response: searchResults = [];
         if (query && query.Items && query.Items.length > 0) {
-            query.Items.forEach(item => {
+            // Cada registro en esta respuesta de la base de datos contiene el username, el language y la proficiency.
+            // Separamos los datos que nos interesan para mostrarlos de manera ordenada en la respuesta de la API. 
+            query.Items.forEach((item) => {
                 const proficiency: string = item.GSI1SK.split('@')[0];
                 const username: string = item.GSI1SK.split('@')[1];
                 response.push([username, `${proficiency.replace(/^0+/, '')}%`]);

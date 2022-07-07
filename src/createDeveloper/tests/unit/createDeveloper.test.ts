@@ -9,6 +9,7 @@ import { createDeveloper } from '../../businessLogic';
 const ddbMock = mockClient(DynamoDBDocumentClient);
 
 beforeEach(() => {
+    // Antes de la ejecución de cada test, se simulan las llamadas a DynamoDB.
     ddbMock.reset();
     ddbMock.on(TransactWriteCommand).resolves(exampleResponseTransactionWrite);
 });
