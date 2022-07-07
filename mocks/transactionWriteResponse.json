@@ -1,0 +1,42 @@
+{
+    "ConsumedCapacity": [
+        {
+            "CapacityUnits": 1,
+            "GlobalSecondaryIndexes": {
+                "string": {
+                    "CapacityUnits": 1,
+                    "ReadCapacityUnits": 1,
+                    "WriteCapacityUnits": 1
+                }
+            },
+            "LocalSecondaryIndexes": {
+                "string": {
+                    "CapacityUnits": 1,
+                    "ReadCapacityUnits": 1,
+                    "WriteCapacityUnits": 1
+                }
+            },
+            "ReadCapacityUnits": 1,
+            "Table": {
+                "CapacityUnits": 1,
+                "ReadCapacityUnits": 1,
+                "WriteCapacityUnits": 1
+            },
+            "TableName": "string",
+            "WriteCapacityUnits": 1
+        }
+    ],
+    "ItemCollectionMetrics": {
+        "string": [
+            {
+                "ItemCollectionKey": {
+                    "string": {
+                        "S": "string",
+                        "SS": ["string"]
+                    }
+                },
+                "SizeEstimateRangeGB": [0.1]
+            }
+        ]
+    }
+}

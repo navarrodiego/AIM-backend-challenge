@@ -1,64 +1,49 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { lambdaHandler } from '../../app';
+import { event } from '../../../../events/event';
+import * as exampleResponseTransactionWrite from '../../../../mocks/transactionWriteResponse.json';
+import { mockClient } from 'aws-sdk-client-mock';
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { lambdaHandler } from '../../handler';
+import { createDeveloper } from '../../businessLogic';
 
-describe('Unit test for app handler', function () {
-    it('verifies successful response', async () => {
-        const event: APIGatewayProxyEvent = {
-            httpMethod: 'get',
-            body: '',
-            headers: {},
-            isBase64Encoded: false,
-            multiValueHeaders: {},
-            multiValueQueryStringParameters: {},
-            path: '/hello',
-            pathParameters: {},
-            queryStringParameters: {},
-            requestContext: {
-                accountId: '123456789012',
-                apiId: '1234',
-                authorizer: {},
-                httpMethod: 'get',
-                identity: {
-                    accessKey: '',
-                    accountId: '',
-                    apiKey: '',
-                    apiKeyId: '',
-                    caller: '',
-                    clientCert: {
-                        clientCertPem: '',
-                        issuerDN: '',
-                        serialNumber: '',
-                        subjectDN: '',
-                        validity: { notAfter: '', notBefore: '' },
-                    },
-                    cognitoAuthenticationProvider: '',
-                    cognitoAuthenticationType: '',
-                    cognitoIdentityId: '',
-                    cognitoIdentityPoolId: '',
-                    principalOrgId: '',
-                    sourceIp: '',
-                    user: '',
-                    userAgent: '',
-                    userArn: '',
-                },
-                path: '/hello',
-                protocol: 'HTTP/1.1',
-                requestId: 'c6af9ac6-7b61-11e6-9a41-93e8deadbeef',
-                requestTimeEpoch: 1428582896000,
-                resourceId: '123456',
-                resourcePath: '/hello',
-                stage: 'dev',
-            },
-            resource: '',
-            stageVariables: {},
-        };
-        const result: APIGatewayProxyResult = await lambdaHandler(event);
+const ddbMock = mockClient(DynamoDBDocumentClient);
+ddbMock.on(TransactWriteCommand).resolves(exampleResponseTransactionWrite);
 
-        expect(result.statusCode).toEqual(200);
+beforeEach(() => {
+    ddbMock.reset();
+});
+
+describe('Tests for lambda handler', () => {
+    it('Returns 201 status code with valid username', async () => {
+        const result = await lambdaHandler(event);
+        expect(result.statusCode).toBe(201);
+    });
+    it('Returns 400 status code if body is empty', async () => {
+        let emptyBodyEvent = { ...event, body: '' };
+        const result = await lambdaHandler(emptyBodyEvent);
+        expect(result.statusCode).toBe(400);
+    });
+});
+
+describe('Tests for business logic', () => {
+    it('Succeeds with valid username', async () => {
+        const result = await createDeveloper('exampleUsername');
+        expect(result.statusCode).toEqual(201);
         expect(result.body).toEqual(
             JSON.stringify({
-                message: 'hello world',
-            }),
+                message: 'Success'
+            })
         );
+    });
+    it('Returns 404 with not existing User', async () => {
+        ddbMock
+            .on(TransactWriteCommand)
+            .resolves(exampleResponseTransactionWrite);
+        try {
+            const result = await createDeveloper('thisUserDoesNotExist123456');
+            expect(true).toEqual(false);
+        } catch (error) {
+            expect(error.response.status).toEqual(404);
+        }
     });
 });

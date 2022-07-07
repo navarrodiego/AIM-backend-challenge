@@ -1,8 +1,21 @@
 version = 0.1
-[default]
-[default.deploy]
-[default.deploy.parameters]
-stack_name = "aim-backend-challenge"
+[dev]
+[dev.deploy]
+[dev.deploy.parameters]
+stack_name = "dev-aim-backend-challenge"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-pw82a1troeol"
+s3_prefix = "dev-aim-backend-challenge"
+region = "sa-east-1"
+confirm_changeset = false
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+image_repositories = []
+parameter_overrides = "StageName=\"dev\" TableName=\"aimDevTable\""
+
+[prod]
+[prod.deploy]
+[prod.deploy.parameters]
+stack_name = "prod-aim-backend-challenge"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-pw82a1troeol"
 s3_prefix = "aim-backend-challenge"
 region = "sa-east-1"
@@ -10,3 +23,9 @@ confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 disable_rollback = true
 image_repositories = []
+parameter_overrides = "StageName=\"prod\" TableName=\"prodDevTable\""
+
+[default.build.parameters]
+beta_features = true
+[default.sync.parameters]
+beta_features = true

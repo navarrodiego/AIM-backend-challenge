@@ -1,28 +1,31 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
   aim-backend-challenge
-  
+
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 5
+    Timeout: 15
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref TableName
 
 Parameters:
   StageName:
     Type: String
-    Default: dev
+    Default: "dev"
     Description: (Required) Enter dev, prod. Default is dev.
     AllowedValues:
-      - dev
-      - prod
-  ProjectName:
+      - "dev"
+      - "prod"
+  TableName:
     Type: String
-    Default: aim-dev-api
-    Description: (Required) The name of the project
+    Default: "aimDevTable"
     AllowedValues:
-      - aim-dev-api
-      - aim-prod-api
+      - "aimDevTable"
+      - "aimProdTable"
+    Description: DynamoDB Table Name
 
 Resources:
   AimAPI:
@@ -36,7 +39,10 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: src/createDeveloper
-      Handler: app.lambdaHandler
+      Handler: handler.lambdaHandler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
       Runtime: nodejs16.x
       Architectures:
         - x86_64
@@ -53,10 +59,10 @@ Resources:
         Minify: true
         Target: "es2020"
         Sourcemap: true
-        EntryPoints: 
-        - app.ts
+        EntryPoints:
+          - handler.ts
 
 Outputs:
   AimBackendApi:
     Description: "API Gateway endpoint URL for Aim Backend API"
-    Value: !Sub "https://${AimAPI}.execute-api.${AWS::Region}.amazonaws.com"
+    Value: !Sub "https://${AimAPI}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
