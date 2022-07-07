@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "type": "aws-sam",
+            "request": "direct-invoke",
+            "name": "AIM-backend-challenge:src/getDeveloperByUsername/services/queryDevInfoFromDatabase.getDevInfoFromDatabase (nodejs16.x)",
+            "invokeTarget": {
+                "target": "code",
+                "projectRoot": "${workspaceFolder}/",
+                "lambdaHandler": "src/getDeveloperByUsername/services/queryDevInfoFromDatabase.getDevInfoFromDatabase"
+            },
+            "lambda": {
+                "runtime": "nodejs16.x",
+                "payload": {},
+                "environmentVariables": {}
+            }
+        }
+    ]
+}

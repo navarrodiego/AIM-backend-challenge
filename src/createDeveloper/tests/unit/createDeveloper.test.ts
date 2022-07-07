@@ -7,10 +7,10 @@ import { lambdaHandler } from '../../handler';
 import { createDeveloper } from '../../businessLogic';
 
 const ddbMock = mockClient(DynamoDBDocumentClient);
-ddbMock.on(TransactWriteCommand).resolves(exampleResponseTransactionWrite);
 
 beforeEach(() => {
     ddbMock.reset();
+    ddbMock.on(TransactWriteCommand).resolves(exampleResponseTransactionWrite);
 });
 
 describe('Tests for lambda handler', () => {
@@ -36,9 +36,6 @@ describe('Tests for business logic', () => {
         );
     });
     it('Returns 404 with not existing User', async () => {
-        ddbMock
-            .on(TransactWriteCommand)
-            .resolves(exampleResponseTransactionWrite);
         try {
             const result = await createDeveloper('thisUserDoesNotExist123456');
             expect(true).toEqual(false);

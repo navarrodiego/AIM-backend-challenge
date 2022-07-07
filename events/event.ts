@@ -30,7 +30,9 @@ export const event: APIGatewayProxyEvent = {
     },
     queryStringParameters: null,
     multiValueQueryStringParameters: null,
-    pathParameters: null,
+    pathParameters: {
+        username: 'username'
+    },
     stageVariables: null,
     requestContext: {
         authorizer: {},

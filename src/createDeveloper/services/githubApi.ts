@@ -22,42 +22,51 @@ export const getDevInfo = async (username: string): Promise<DevInfo> => {
 };
 
 const getLanguagesUrls = async (reposUrl: string): Promise<string[]> => {
-    const languagesUrls: string[] = [];
-    const response = await axios.get(reposUrl);
-    response.data.forEach((repo: { languages_url: string }) => {
-        languagesUrls.push(repo.languages_url);
-    });
-    return languagesUrls;
+    try {
+        const languagesUrls: string[] = [];
+        const response = await axios.get(reposUrl);
+        response.data.forEach((repo: { languages_url: string }) => {
+            languagesUrls.push(repo.languages_url);
+        });
+        return languagesUrls;
+    } catch (error) {
+        throw error;
+    }
 };
 
 const calculateLanguagesProficiency = async (
     languagesUrls: string[]
 ): Promise<{ [key: string]: number }> => {
-    const arrayOfPromises = languagesUrls.map((url: string) => {
-        return axios.get(url);
-    });
-    const numberOfRepos = languagesUrls.length;
-    return Promise.all(arrayOfPromises)
-        .then((responses) => {
-            const languages: { [key: string]: number } = {};
-            responses.forEach(
-                (response: { data: { [key: string]: number } }) => {
-                    Object.keys(response.data).forEach((language: string) => {
-                        if (languages[language]) {
-                            languages[language] += 1;
-                        } else {
-                            languages[language] = 1;
-                        }
-                    });
-                }
-            );
-            for (const language in languages) {
-                languages[language] =
-                    (languages[language] / numberOfRepos) * 100;
-            }
-            return languages;
-        })
-        .catch((error) => {
-            throw error;
+    try {
+
+        const arrayOfPromises = languagesUrls.map((url: string) => {
+            return axios.get(url);
         });
+        const numberOfRepos = languagesUrls.length;
+        return Promise.all(arrayOfPromises)
+            .then((responses) => {
+                const languages: { [key: string]: number } = {};
+                responses.forEach(
+                    (response: { data: { [key: string]: number } }) => {
+                        Object.keys(response.data).forEach((language: string) => {
+                            if (languages[language]) {
+                                languages[language] += 1;
+                            } else {
+                                languages[language] = 1;
+                            }
+                        });
+                    }
+                );
+                for (const language in languages) {
+                    languages[language] =
+                        (languages[language] / numberOfRepos) * 100;
+                }
+                return languages;
+            })
+            .catch((error) => {
+                throw error;
+            });
+    } catch (error) {
+        throw error;
+    }
 };
